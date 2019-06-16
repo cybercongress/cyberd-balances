@@ -1,0 +1,12 @@
+version: '3'
+services:
+    balances:
+        build: .
+        volumes:
+            - ./calculated/:/tmp
+    
+    ofelia:
+        image: mcuadros/ofelia:latest
+        volumes:
+            - ./ofelia:/etc/ofelia
+            - /var/run/docker.sock:/var/run/docker.sock
