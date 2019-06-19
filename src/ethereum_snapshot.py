@@ -43,7 +43,7 @@ from balances_table
 where balance > 0
 and address not in (select address from `bigquery-public-data.ethereum_blockchain.contracts`)
 order by balance desc
-"""
+""".format(block_number=1000000) # TODO add from args
 
 
 def extract_balances():
