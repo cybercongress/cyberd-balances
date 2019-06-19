@@ -1,0 +1,26 @@
+{
+    "inventors": {
+        "cyber1lle7ul44h9xqh8k7hesm5w966jljrr5dwkeghr": "50",
+        "cyber1ll67af9cs0jj82rml08kpn25yd77sr0e55e7ur": "50"
+    },
+    "cybercongress": {
+        "cyber1llm6upvjadgrt8pq4h32lgmezw8fwwnl5g6s9r": "100",
+    },
+    "investors": {
+        "cyber1lldfm9h9psqawxv3fk44jvc73wwpl0nu68zyql": "75",
+        "cyber1llmtzud92cxtky50ruuv6t3mrmxf6kafq4eqya": "10",
+        "cyber1lluqd4vdxrrwsgpa3h2amrfkxf39csaeefn6wq": "5",
+        "cyber1lls6mrzd6zqqs0sguj050r9t68egafe0p633gm": "5",
+        "cyber1llnkr9fa6jcyz0zgyplmlhyr7njhumk5n8ergg": "5",
+    },
+    "pre_genesis_round": {
+        "cyber1qq2jnn3vhlzu368cxvfr8vzerwsd2fgwqxkgec": "100",
+    },
+    "game_of_thrones": {
+        "cyber1llt3rp80fvlc40e5vm9sc5x49uv8vsnr5kv7qr": "50",
+        "cyber1lltdurdnh3au6aytek8cg2ppzhjlzp7g5fvenq": "50"
+    },
+    "foundation_auction_multisig": {
+        "cyber1lldzw0m4fhlsqtwf5gd5rp59ywfqlvanyc8k0u": "100",
+    }
+}
