@@ -1,6 +1,7 @@
 from google.cloud import bigquery
 import pandas as pd
 from tqdm import tqdm
+import click
 
 
 bigquery_balances_sql = """
@@ -43,17 +44,23 @@ from balances_table
 where balance > 0
 and address not in (select address from `bigquery-public-data.ethereum_blockchain.contracts`)
 order by balance desc
-""".format(block_number=1000000) # TODO add from args
+"""
 
 
-def extract_balances():
+def extract_balances(block_number):
     client = bigquery.Client.from_service_account_json(
         "../google-big-query-key.json"
     )
-    query = client.query(bigquery_balances_sql)
+    sql = bigquery_balances_sql.format(block_number=block_number)
+    query = client.query(sql)
     result = query.result()
     balances = [dict(row) for row in tqdm(result, total=result.total_rows)]
+    return balances
+
+
+def create_dataframe(balances):
     balances_df = pd.DataFrame(balances)
+    balances_df["balance"] = (balances_df["balance"] / (10 ** 18)).astype(float)
     return balances_df
 
 
@@ -68,7 +75,14 @@ def save_balances(balances_df):
     balances_df.to_csv("../tmp/balances.csv")
 
 
-if (__name__ == "__main__"):
-    balances_df = extract_balances()
+@click.command()
+@click.option('--block', default=1000000, help='Last block of ethereum state for genesis')
+def extract(block):
+    balances = extract_balances(block)
+    balances_df = create_dataframe(balances)
     balances_df = cut_balances(balances_df)
     save_balances(balances_df)
+
+
+if (__name__ == "__main__"):
+    extract()
