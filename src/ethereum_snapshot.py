@@ -2,6 +2,7 @@ from google.cloud import bigquery
 import pandas as pd
 from tqdm import tqdm
 import click
+from config import *
 
 
 bigquery_balances_sql = """
@@ -49,7 +50,7 @@ order by balance desc
 
 def extract_balances(block_number):
     client = bigquery.Client.from_service_account_json(
-        "../google-big-query-key.json"
+        GOOGLE_KEY_PATH
     )
     sql = bigquery_balances_sql.format(block_number=block_number)
     query = client.query(sql)
@@ -72,11 +73,11 @@ def cut_balances(balances_df):
 
 
 def save_balances(balances_df):
-    balances_df.to_csv("../tmp/balances.csv")
+    balances_df.to_csv(ETHEREUM_GENESIS_PATH_CSV)
 
 
 @click.command()
-@click.option('--block', default=1000000, help='Last block of ethereum state for genesis')
+@click.option('--block', default=DEFAULT_ETHEREUM_BLOCK, help='Last block of ethereum state for genesis')
 def extract(block):
     balances = extract_balances(block)
     balances_df = create_dataframe(balances)

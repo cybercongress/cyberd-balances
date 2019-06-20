@@ -1,16 +1,14 @@
 import json
 import pandas as pd
-
-
-genesis_path = "../data/cosmos_genesis_snapshot.json"
+from config import *
 
 
 def get_accounts():
-    genesis_json = json.load(open(genesis_path))
+    genesis_json = json.load(open(COSMOS_GENESIS_PATH))
     accounts = genesis_json["app_state"]["accounts"]
     accounts_prepared = [{
             "address": account["address"],
-            "amount": int(account["coins"][0]["amount"])
+            "balance": int(account["coins"][0]["amount"])
         }
         for account in accounts
     ]
@@ -23,10 +21,13 @@ def create_genesis(accounts):
 
 
 def save_genesis(genesis_df):
-    genesis_df.to_csv("../tmp/cosmos_genesis_snapshot.csv")
+    genesis_df.to_csv(COSMOS_GENESIS_PATH_CSV)
 
 
-if (__name__ == "__main__"):
+def extract():
     accounts = get_accounts()
     genesis_df = create_genesis(accounts)
     save_genesis(genesis_df)
+
+if (__name__ == "__main__"):
+    extract()

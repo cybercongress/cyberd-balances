@@ -1,7 +1,24 @@
 # Install
 
 ```bash
-TODO
+pip3 install -r ./requirements.txt
+```
+
+# Run
+
+Create ethereum snapshot CSV with balances
+```bash
+python3 ./src/ethereum_snapshot.py --block ACTUAL_BLOCK
+```
+
+Create cosmos snapshot CSV with balances
+```bash
+python3 ./src/cosmos_hub_snapshot.py
+```
+
+Create merged genesis file
+```bash
+python3 ./src/genesis_generator.py
 ```
 
 # Distribution / Prepare scripts task
