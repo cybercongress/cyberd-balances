@@ -6,9 +6,9 @@ COSMOS_GENESIS_PATH_CSV = "./data/cosmos_genesis_snapshot.csv"
 DEFAULT_ETHEREUM_BLOCK = 10000000
 GOOGLE_KEY_PATH = "google-big-query-key.json"
 ETHEREUM_GENESIS_PATH_CSV = "./data/ethereum_genesis_snapshot.csv"
+ETHEREUM_THRESHOLD = 0.8
 
 # For genesis generator
-CYB_EMISSION = 1000000000000000.0
 CSV_DISTRIBUTIONS = {
     "ethereum_drop": ETHEREUM_GENESIS_PATH_CSV,
     "cosmos_drop": COSMOS_GENESIS_PATH_CSV

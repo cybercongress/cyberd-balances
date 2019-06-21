@@ -66,14 +66,14 @@ def create_dataframe(balances):
 
 
 def cut_balances(balances_df):
-    sum_threshold = balances_df["balance"].sum() * 0.8
+    sum_threshold = balances_df["balance"].sum() * ETHEREUM_THRESHOLD
     balances_sum = balances_df["balance"].cumsum()
     balances_df = balances_df[balances_sum <= sum_threshold]
     return balances_df
 
 
 def save_balances(balances_df):
-    balances_df.to_csv(ETHEREUM_GENESIS_PATH_CSV)
+    balances_df.set_index("address").to_csv(ETHEREUM_GENESIS_PATH_CSV)
 
 
 @click.command()
