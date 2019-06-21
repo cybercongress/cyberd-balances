@@ -52,10 +52,12 @@ def save_json(genesis_json, balances):
     # TODO Remove 110% from genesis config
     # assert abs(balances.sum() - CYB_EMISSION) <= 10 
 
+    # TODO add number
     genesis_json["app_state"]["accounts"] = [{
         "addr": address,
-        "amt": str(balance)
-    } for address, balance in balances.iteritems()]
+        "amt": str(balance),
+        "nmb": str(index)
+    } for index, (address, balance) in enumerate(balances.iteritems())]
 
     json.dump(
         genesis_json,
