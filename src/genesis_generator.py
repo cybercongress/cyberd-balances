@@ -31,6 +31,7 @@ def load_json(emission, manual_json, part_percentage, start_number):
 
 def load_csv(emission, path, part_percentage, start_number):
     balances_df = pd.read_csv(path)
+    balances_df["balance"] = balances_df["balance"].pow(0.5)
     balances_df["percentage"] = balances_df["balance"] / balances_df["balance"].sum()
     preprocess_balances(balances_df, emission, part_percentage, start_number)    
     return balances_df
