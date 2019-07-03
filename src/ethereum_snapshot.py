@@ -62,6 +62,7 @@ def extract_balances(block_number):
 def create_dataframe(balances):
     balances_df = pd.DataFrame(balances)
     balances_df["balance"] = (balances_df["balance"] / (10 ** 18)).astype(float)
+    balances_df["balance"] = balances_df["balance"].pow(0.5)
     return balances_df
 
 
