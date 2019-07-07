@@ -9,7 +9,7 @@ bigquery_balances_sql = """
 with balances_table as (
     with double_entry_book as (
         -- debits
-        select to_address as address, value as value
+        select to_address as address, value as value, 0 as out_transaction
         from `bigquery-public-data.ethereum_blockchain.traces`
         where to_address is not null
         and block_number <= {block_number}
@@ -17,7 +17,7 @@ with balances_table as (
         and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
         union all
         -- credits
-        select from_address as address, -value as value
+        select from_address as address, -value as value, 1 as out_transaction
         from `bigquery-public-data.ethereum_blockchain.traces`
         where from_address is not null
         and block_number <= {block_number}
@@ -25,18 +25,18 @@ with balances_table as (
         and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
         union all
         -- transaction fees debits
-        select miner as address, sum(cast(receipt_gas_used as numeric) * cast(gas_price as numeric)) as value
+        select miner as address, sum(cast(receipt_gas_used as numeric) * cast(gas_price as numeric)) as value, 0 as out_transaction
         from `bigquery-public-data.ethereum_blockchain.transactions` as transactions
         join `bigquery-public-data.ethereum_blockchain.blocks` as blocks on blocks.number = transactions.block_number
         where block_number <= {block_number}
         group by blocks.miner
         union all
         -- transaction fees credits
-        select from_address as address, -(cast(receipt_gas_used as numeric) * cast(gas_price as numeric)) as value
+        select from_address as address, -(cast(receipt_gas_used as numeric) * cast(gas_price as numeric)) as value, 0 as out_transaction
         from `bigquery-public-data.ethereum_blockchain.transactions`
         where block_number <= {block_number}
     )
-    select address, sum(value) as balance
+    select address, sum(value) as balance, sum(out_transaction) as out_transactions
     from double_entry_book
     group by address
 )
@@ -44,6 +44,7 @@ select address, balance
 from balances_table
 where balance > 0
 and address not in (select address from `bigquery-public-data.ethereum_blockchain.contracts`)
+and out_transactions > 0
 order by balance desc
 """
 
