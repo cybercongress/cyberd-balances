@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 from config import *
-import math
 
 
 def get_accounts():
@@ -9,7 +8,7 @@ def get_accounts():
     accounts = genesis_json["app_state"]["accounts"]
     accounts_prepared = [{
             "address": account["address"],
-            "balance": math.sqrt(int(account["coins"][0]["amount"]))
+            "balance": int(account["coins"][0]["amount"])
         }
         for account in accounts
     ]
