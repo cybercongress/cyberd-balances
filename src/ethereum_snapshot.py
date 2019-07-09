@@ -40,11 +40,10 @@ with balances_table as (
     from double_entry_book
     group by address
 )
-select address, balance
+select address, balance, out_transactions
 from balances_table
 where balance > 0
 and address not in (select address from `bigquery-public-data.ethereum_blockchain.contracts`)
-and out_transactions > 0
 order by balance desc
 """
 
@@ -70,12 +69,12 @@ def create_dataframe(balances):
 def cut_balances(balances_df):
     sum_threshold = balances_df["balance"].sum() * ETHEREUM_THRESHOLD
     balances_sum = balances_df["balance"].cumsum()
-    balances_df = balances_df[balances_sum <= sum_threshold]
+    balances_df = balances_df[(balances_sum <= sum_threshold) & (balances_df["out_transactions"] > 0)]
     return balances_df
 
 
 def save_balances(balances_df):
-    balances_df.set_index("address").to_csv(ETHEREUM_GENESIS_PATH_CSV)
+    balances_df.drop(columns=["out_transactions"]).set_index("address").to_csv(ETHEREUM_GENESIS_PATH_CSV)
 
 
 @click.command()
