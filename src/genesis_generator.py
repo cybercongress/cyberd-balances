@@ -41,7 +41,7 @@ def get_start_number(all_balances):
     if all_balances:
         return all_balances[-1]["number"].max()
     else:
-        return 0
+        return -1
 
 def get_distributions(emission, distribution_json, manual_json):
     all_balances = []
