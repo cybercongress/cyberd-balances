@@ -11,7 +11,9 @@ def load_config():
 
 
 def get_emission(genesis_json):
-    return float(genesis_json["app_state"]["staking"]["pool"]["not_bonded_tokens"])
+    emission = float(genesis_json["app_state"]["staking"]["pool"]["not_bonded_tokens"])
+    additional_emission = pd.read_csv(VALIDATORS_PATH_CSV, names=["address", "balance"])["balance"].sum()
+    return emission - additional_emission, additional_emission
 
 
 def preprocess_balances(balances_df, emission, part_percentage, start_number):
@@ -29,9 +31,14 @@ def load_json(emission, manual_json, part_percentage, start_number):
     return balances_df
 
 
-def load_csv(emission, path, part_percentage, start_number):
-    balances_df = pd.read_csv(path)
-    balances_df["balance"] = balances_df["balance"].pow(0.5)
+def load_csv(emission, path, part_percentage, start_number, with_header=True, sqrt=True):
+    if with_header:
+        balances_df = pd.read_csv(path)
+    else:
+        balances_df = pd.read_csv(path, names=["address", "balance"])
+
+    if sqrt:
+        balances_df["balance"] = balances_df["balance"].pow(0.5)
     balances_df["percentage"] = balances_df["balance"] / balances_df["balance"].sum()
     preprocess_balances(balances_df, emission, part_percentage, start_number)    
     return balances_df
@@ -43,9 +50,10 @@ def get_start_number(all_balances):
     else:
         return -1
 
-def get_distributions(emission, distribution_json, manual_json):
+def get_distributions(emission, additional_emission, distribution_json, manual_json):
     all_balances = []
 
+    # Manually selected genesis part
     for distribution_type in distribution_json.keys():
         if distribution_type not in CSV_DISTRIBUTIONS:
             part_percentage = float(distribution_json[distribution_type]) / 100
@@ -53,6 +61,12 @@ def get_distributions(emission, distribution_json, manual_json):
             balances_df = load_json(emission, manual_json[distribution_type], part_percentage, start_number)
             all_balances.append(balances_df)
 
+    # Genesis part with validators and dedicated emission
+    start_number = get_start_number(all_balances)
+    balances_df = load_csv(additional_emission, VALIDATORS_PATH_CSV, 1, start_number, with_header=False, sqrt=False)
+    all_balances.append(balances_df)
+
+    # Genesis part with addresses from another chains
     for distribution_type in CSV_DISTRIBUTIONS:
         part_percentage = float(distribution_json[distribution_type]) / 100
         start_number = get_start_number(all_balances)
@@ -88,10 +102,10 @@ def save_json(emission, genesis_json, balances):
 
 def generate():
     distribution_json, manual_json, genesis_json = load_config()
-    emission = get_emission(genesis_json)
-    all_balances = get_distributions(emission, distribution_json, manual_json)
+    main_emission, additional_emission = get_emission(genesis_json)
+    all_balances = get_distributions(main_emission, additional_emission, distribution_json, manual_json)
     cyb_balances_df = concatenate_balances(all_balances)
-    save_json(emission, genesis_json, cyb_balances_df)
+    save_json(main_emission + additional_emission, genesis_json, cyb_balances_df)
 
 
 if (__name__ == "__main__"):
