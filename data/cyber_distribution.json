@@ -1,9 +1,11 @@
 {
+    "total": "2700000000000",
     "inventors": "2",
     "cybercongress": "4",
-    "investors": "4",
-    "cosmos_drop": "5",
-    "ethereum_drop": "10",
+    "investors": "5",
+    "validators_drop": "2700000000000",
+    "cosmos_drop": "5000000000",
+    "ethereum_drop": "10000000000",
     "pre_genesis_round": "5",
     "game_of_thrones": "20",
     "foundation_auction_multisig": "60"
